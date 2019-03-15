@@ -27,6 +27,7 @@
     <dimen name="warning_icon_size_small">24dp</dimen>
     <dimen name="warning_icon_size">28dp</dimen>
     <dimen name="warning_padding_default">16dp</dimen>
+    <dimen name="warning_fix_margin_top">-28dp</dimen>
 
 
 
