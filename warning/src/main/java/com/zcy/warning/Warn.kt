@@ -22,6 +22,8 @@ import kotlinx.android.synthetic.main.layout_warn.view.*
 /**
  * @author:         zhaochunyu
  * @description:    custom warn view
+ *
+ *                     rename Pudding
  * @date:           2019/3/15
  */
 class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
@@ -131,7 +133,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * Disable touches while the Warn is showing
      */
     fun disableOutsideTouch() {
-        flClickShield.isClickable = true
+        warn_body.isClickable = true
     }
 
     /**
@@ -141,8 +143,8 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      */
     fun setTitle(title: String) {
         if (!TextUtils.isEmpty(title)) {
-            tvTitle.visibility = View.VISIBLE
-            tvTitle.text = title
+            text.visibility = View.VISIBLE
+            text.text = title
         }
     }
 
@@ -153,9 +155,9 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      */
     fun setTitleAppearance(@StyleRes textAppearance: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            tvTitle.setTextAppearance(textAppearance)
+            text.setTextAppearance(textAppearance)
         } else {
-            tvTitle.setTextAppearance(tvText.context, textAppearance)
+            text.setTextAppearance(text.context, textAppearance)
         }
     }
 
@@ -165,7 +167,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param typeface The typeface to use
      */
     fun setTitleTypeface(typeface: Typeface) {
-        tvTitle.typeface = typeface
+        text.typeface = typeface
     }
 
     /**
@@ -174,7 +176,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param typeface The typeface to use
      */
     fun setTextTypeface(typeface: Typeface) {
-        tvText.typeface = typeface
+        text.typeface = typeface
     }
 
     /**
@@ -184,8 +186,8 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      */
     fun setText(text: String) {
         if (!TextUtils.isEmpty(text)) {
-            tvText.visibility = View.VISIBLE
-            tvText.text = text
+            this.text.visibility = View.VISIBLE
+            this.text.text = text
         }
     }
 
@@ -196,9 +198,9 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      */
     fun setTextAppearance(@StyleRes textAppearance: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            tvText.setTextAppearance(textAppearance)
+            text.setTextAppearance(textAppearance)
         } else {
-            tvText.setTextAppearance(tvText.context, textAppearance)
+            text.setTextAppearance(text.context, textAppearance)
         }
     }
 
@@ -208,7 +210,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param iconId Drawable resource id of the icon to use in the Warn
      */
     fun setIcon(@DrawableRes iconId: Int) {
-        ivIcon.setImageDrawable(AppCompatResources.getDrawable(context, iconId))
+        icon.setImageDrawable(AppCompatResources.getDrawable(context, iconId))
     }
 
     /**
@@ -217,7 +219,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param color Color int
      */
     fun setIconColorFilter(@ColorInt color: Int) {
-        ivIcon.setColorFilter(color)
+        icon.setColorFilter(color)
     }
 
     /**
@@ -226,7 +228,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param colorFilter ColorFilter
      */
     fun setIconColorFilter(colorFilter: ColorFilter) {
-        ivIcon.colorFilter = colorFilter
+        icon.colorFilter = colorFilter
     }
 
     /**
@@ -236,7 +238,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param mode  PorterDuff.Mode
      */
     fun setIconColorFilter(@ColorInt color: Int, mode: PorterDuff.Mode) {
-        ivIcon.setColorFilter(color, mode)
+        icon.setColorFilter(color, mode)
     }
 
     /**
@@ -245,7 +247,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param bitmap Bitmap image of the icon to use in the Warn.
      */
     fun setIcon(bitmap: Bitmap) {
-        ivIcon.setImageBitmap(bitmap)
+        icon.setImageBitmap(bitmap)
     }
 
     /**
@@ -254,7 +256,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param drawable Drawable image of the icon to use in the Warn.
      */
     fun setIcon(drawable: Drawable) {
-        ivIcon.setImageDrawable(drawable)
+        icon.setImageDrawable(drawable)
     }
 
     /**
@@ -263,7 +265,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param showIcon True to show the icon, false otherwise
      */
     fun showIcon(showIcon: Boolean) {
-        ivIcon.visibility = if (showIcon) View.VISIBLE else View.GONE
+        icon.visibility = if (showIcon) View.VISIBLE else View.GONE
     }
 
     /**
@@ -271,38 +273,17 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      *
      * @param dismissible True if warn can be dismissed
      */
-    fun setDismissable(dismissable: Boolean) {
-        this.isDismissable = dismissable
-    }
-
-    /**
-     * Get if the warn is isDismissable
-     * @return
-     */
-    fun isDismissable(): Boolean {
-        return isDismissable
-    }
-
-    /**
-     * Set whether to enable swipe to dismiss or not
-     */
-    fun enableSwipeToDismiss() {
-        flwarnBackground.let {
-            it.setOnTouchListener(SwipeDismissTouchListener(it, object : SwipeDismissTouchListener.DismissCallbacks {
-                override fun canDismiss(): Boolean {
-                    return true
-                }
-
-                override fun onDismiss(view: View) {
-                    removeFromParent()
-                }
-
-                override fun onTouch(view: View, touch: Boolean) {
-                    // Ignore
-                }
-            }))
-        }
-    }
+//    fun setDismissable(dismissable: Boolean) {
+//        this.isDismissable = dismissable
+//    }
+//
+//    /**
+//     * Get if the warn is isDismissable
+//     * @return
+//     */
+//    fun isDismissable(): Boolean {
+//        return isDismissable
+//    }
 
     /**
      * Set if the Icon should pulse or not
@@ -310,7 +291,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param shouldPulse True if the icon should be animated
      */
     fun pulseIcon(shouldPulse: Boolean) {
-        this.enableIconPulse = shouldPulse
+//        this.enableIconPulse = shouldPulse
     }
 
     /**
@@ -319,7 +300,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param enableInfiniteDuration True if the duration of the warn is infinite
      */
     fun setEnableInfiniteDuration(enableInfiniteDuration: Boolean) {
-        this.enableInfiniteDuration = enableInfiniteDuration
+//        this.enableInfiniteDuration = enableInfiniteDuration
     }
 
     /**
@@ -328,7 +309,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param enableProgress True to enable, False to disable
      */
     fun setEnableProgress(enableProgress: Boolean) {
-        this.enableProgress = enableProgress
+//        this.enableProgress = enableProgress
     }
 
     /**
@@ -337,7 +318,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param color The color resource
      */
     fun setProgressColorRes(@ColorRes color: Int) {
-        pbProgress?.progressDrawable?.colorFilter = LightingColorFilter(MUL, ContextCompat.getColor(context, color))
+//        pbProgress?.progressDrawable?.colorFilter = LightingColorFilter(MUL, ContextCompat.getColor(context, color))
     }
 
     /**
@@ -346,7 +327,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param color The color resource
      */
     fun setProgressColorInt(@ColorInt color: Int) {
-        pbProgress?.progressDrawable?.colorFilter = LightingColorFilter(MUL, color)
+//        pbProgress?.progressDrawable?.colorFilter = LightingColorFilter(MUL, color)
     }
 
     /**
@@ -354,9 +335,9 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      *
      * @param listener Listener to be fired
      */
-    fun setOnShowListener(listener: OnShowwarnListener) {
-        this.onShowListener = listener
-    }
+//    fun setOnShowListener(listener: OnShowwarnListener) {
+//        this.onShowListener = listener
+//    }
 
     /**
      * Enable or Disable haptic feedback
@@ -364,7 +345,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param vibrationEnabled True to enable, false to disable
      */
     fun setVibrationEnabled(vibrationEnabled: Boolean) {
-        this.vibrationEnabled = vibrationEnabled
+//        this.vibrationEnabled = vibrationEnabled
     }
 
     /**
@@ -373,19 +354,19 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      * @param text The text to display on the button
      * @param onClick The on click listener
      */
-    fun addButton(text: String, @StyleRes style: Int, onClick: View.OnClickListener) {
-        Button(ContextThemeWrapper(context, style), null, style).apply {
-            this.text = text
-            this.setOnClickListener(onClick)
-
-            buttons.add(this)
-        }
-
-        // Alter padding
-        flwarnBackground?.apply {
-            this.setPadding(this.paddingLeft, this.paddingTop, this.paddingRight, this.paddingBottom / 2)
-        }
-    }
+//    fun addButton(text: String, @StyleRes style: Int, onClick: View.OnClickListener) {
+//        Button(ContextThemeWrapper(context, style), null, style).apply {
+//            this.text = text
+//            this.setOnClickListener(onClick)
+//
+//            buttons.add(this)
+//        }
+//
+//        // Alter padding
+//        flwarnBackground?.apply {
+//            this.setPadding(this.paddingLeft, this.paddingTop, this.paddingRight, this.paddingBottom / 2)
+//        }
+//    }
 
 
 
