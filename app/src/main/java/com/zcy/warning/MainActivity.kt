@@ -3,6 +3,7 @@ package com.zcy.warning
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.zcy.warning.lib.Warning
 
 class MainActivity : AppCompatActivity() {
 

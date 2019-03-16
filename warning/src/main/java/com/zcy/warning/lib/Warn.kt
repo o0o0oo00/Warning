@@ -1,4 +1,4 @@
-package com.zcy.warning
+package com.zcy.warning.lib
 
 import android.content.Context
 import android.graphics.*
@@ -11,12 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.Button
 import android.widget.FrameLayout
 import androidx.annotation.*
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import com.zcy.warning.lib.R
 import kotlinx.android.synthetic.main.layout_warn.view.*
 
 /**
@@ -29,8 +28,14 @@ import kotlinx.android.synthetic.main.layout_warn.view.*
 class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     FrameLayout(context, attrs, defStyleAttr), View.OnClickListener, Animation.AnimationListener {
 
-    private var enterAnimation: Animation = AnimationUtils.loadAnimation(context, R.anim.warning_slide_in_from_top)
-    private var exitAnimation: Animation = AnimationUtils.loadAnimation(context, R.anim.warning_slide_out_to_top)
+    private var enterAnimation: Animation = AnimationUtils.loadAnimation(
+        context,
+        R.anim.warning_slide_in_from_top
+    )
+    private var exitAnimation: Animation = AnimationUtils.loadAnimation(
+        context,
+        R.anim.warning_slide_out_to_top
+    )
     private var duration = DISPLAY_TIME
     private var measureOnce = false
 
@@ -44,14 +49,15 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        Log.e(TAG, "onAttachedToWindow")
         enterAnimation.setAnimationListener(this)
-
         // Set Animation to be Run when View is added to Window
         animation = enterAnimation
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        Log.e(TAG, "onDetachedFromWindow")
         enterAnimation.setAnimationListener(null)
     }
 
@@ -59,14 +65,14 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         Log.e(TAG, "onMeasure")
 
-        // todo this code is not cool , i decided to remove it
-        if (!measureOnce) {
-            measureOnce = true
-            // Add a negative top margin to compensate for overshoot enter animation
-            val params = layoutParams as ViewGroup.MarginLayoutParams
-            params.topMargin = context.resources.getDimensionPixelSize(R.dimen.warning_fix_margin_top)
-            requestLayout()
-        }
+//        // todo this code is not cool , i decided to remove it
+//        if (!measureOnce) {
+//            measureOnce = true
+//            // Add a negative top margin to compensate for overshoot enter animation
+//            val params = layoutParams as ViewGroup.MarginLayoutParams
+//            params.topMargin = context.resources.getDimensionPixelSize(R.dimen.warning_fix_margin_top)
+//            requestLayout()
+//        }
     }
 
     override fun onClick(v: View?) {
@@ -369,7 +375,6 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
 //    }
 
 
-
     override fun onAnimationEnd(animation: Animation?) {
         Log.e(TAG, "onAnimationEnd")
         // to prepare hide
@@ -431,6 +436,15 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
         postDelayed({
             (parent as? ViewGroup)?.removeView(this@Warn)
             //  todo call hideListener
+        }, 100)
+
+    }
+
+    private fun cleanUp2(){
+        clearAnimation() //
+        visibility = View.GONE
+        postDelayed({
+
         }, 100)
 
     }
