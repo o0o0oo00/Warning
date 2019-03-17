@@ -1,55 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/warn_root"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@android:color/transparent"
-    android:clickable="false">
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:id="@+id/warn_root"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@android:color/transparent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/warn_body"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:clickable="true"
-        android:layout_marginTop="-28dp"
-        android:focusable="true"
-        android:background="@color/colorPrimary"
-        android:foreground="?attr/selectableItemBackground"
-        android:paddingStart="@dimen/warning_padding_default"
-        android:paddingTop="@dimen/warning_text_padding_top"
-        android:paddingEnd="@dimen/warning_padding_default"
-        android:paddingBottom="@dimen/warning_padding_default">
+            android:id="@+id/warn_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:clickable="true"
+            android:layout_marginTop="-28dp"
+            android:focusable="true"
+            android:background="@color/colorPrimary"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingStart="@dimen/warning_padding_default"
+            android:paddingTop="@dimen/warning_text_padding_top"
+            android:paddingEnd="@dimen/warning_padding_default"
+            android:paddingBottom="@dimen/warning_padding_default">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon"
-            android:layout_width="@dimen/warning_icon_size"
-            android:layout_height="@dimen/warning_icon_size"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/alerter_ic_notifications" />
+                android:id="@+id/icon"
+                android:layout_width="@dimen/warning_icon_size"
+                android:layout_height="@dimen/warning_icon_size"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/alerter_ic_notifications"/>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorWhite"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/icon"
-            app:layout_constraintTop_toTopOf="@+id/icon"
-            tools:text="Title" />
+                android:id="@+id/text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/icon"
+                app:layout_constraintTop_toTopOf="@+id/icon"
+                tools:text="Title"/>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/subText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorWhite"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/icon"
-            app:layout_constraintTop_toBottomOf="@+id/text"
-            tools:text="subTitle" />
+                android:id="@+id/subText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/icon"
+                app:layout_constraintTop_toBottomOf="@+id/text"
+                tools:text="subTitle"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
