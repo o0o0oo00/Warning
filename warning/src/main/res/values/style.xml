@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="windowManager">
+        <item name="android:windowEnterAnimation">@anim/warning_slide_in_from_top</item>
+        <item name="android:windowExitAnimation">@anim/warning_slide_out_to_top</item>
+    </style>
+
+</resources>

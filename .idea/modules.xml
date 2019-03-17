@@ -5,8 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/Warning.iml" filepath="$PROJECT_DIR$/.idea/Warning.iml" />
       <module fileurl="file://$PROJECT_DIR$/Warning.iml" filepath="$PROJECT_DIR$/Warning.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/warning/warning.iml" filepath="$PROJECT_DIR$/warning/warning.iml" />
       <module fileurl="file://$PROJECT_DIR$/warning/warning.iml" filepath="$PROJECT_DIR$/warning/warning.iml" />
     </modules>
   </component>

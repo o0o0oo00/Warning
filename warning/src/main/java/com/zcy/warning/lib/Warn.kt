@@ -1,21 +1,22 @@
 package com.zcy.warning.lib
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import androidx.annotation.*
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
-import com.zcy.warning.lib.R
 import kotlinx.android.synthetic.main.layout_warn.view.*
 
 /**
@@ -26,71 +27,34 @@ import kotlinx.android.synthetic.main.layout_warn.view.*
  * @date:           2019/3/15
  */
 class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-    FrameLayout(context, attrs, defStyleAttr), View.OnClickListener, Animation.AnimationListener {
+    FrameLayout(context, attrs, defStyleAttr) {
 
-    private var enterAnimation: Animation = AnimationUtils.loadAnimation(
-        context,
-        R.anim.warning_slide_in_from_top
-    )
-    private var exitAnimation: Animation = AnimationUtils.loadAnimation(
-        context,
-        R.anim.warning_slide_out_to_top
-    )
-    private var duration = DISPLAY_TIME
-    private var measureOnce = false
+    var hasShowed = false
 
     init {
-        View.inflate(context, R.layout.layout_warn, this)
+        inflate(context, R.layout.layout_warn, this)
 //        isHapticFeedbackEnabled = true  触力反馈
-        ViewCompat.setTranslationZ(this, Integer.MAX_VALUE.toFloat())
-
-        warn_body.setOnClickListener(this)
+//        ViewCompat.setTranslationZ(this, Integer.MAX_VALUE.toFloat())
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        hasShowed = true
         Log.e(TAG, "onAttachedToWindow")
-        enterAnimation.setAnimationListener(this)
-        // Set Animation to be Run when View is added to Window
-        animation = enterAnimation
+        initConfiguration()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        hasShowed = false
         Log.e(TAG, "onDetachedFromWindow")
-        enterAnimation.setAnimationListener(null)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         Log.e(TAG, "onMeasure")
-
-//        // todo this code is not cool , i decided to remove it
-//        if (!measureOnce) {
-//            measureOnce = true
-//            // Add a negative top margin to compensate for overshoot enter animation
-//            val params = layoutParams as ViewGroup.MarginLayoutParams
-//            params.topMargin = context.resources.getDimensionPixelSize(R.dimen.warning_fix_margin_top)
-//            requestLayout()
-//        }
     }
 
-    override fun onClick(v: View?) {
-        hide()
-    }
-
-    // frameLayout 的点击事件传给 warn_body
-    override fun setOnClickListener(l: OnClickListener?) {
-        warn_body.setOnClickListener(l)
-    }
-
-    /* Setters and Getters */
-
-    /**
-     * Sets the Warn Background colour
-     *
-     * @param color The qualified colour integer
-     */
     fun setWarnBackgroundColor(@ColorInt color: Int) {
         warn_body.setBackgroundColor(color)
     }
@@ -375,25 +339,6 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
 //    }
 
 
-    override fun onAnimationEnd(animation: Animation?) {
-        Log.e(TAG, "onAnimationEnd")
-        // to prepare hide
-        prepareHide()
-    }
-
-    override fun onAnimationStart(animation: Animation?) {
-        Log.e(TAG, "onAnimationStart isInEditMode = $isInEditMode")
-        if (isInEditMode) return
-        visibility = View.VISIBLE
-        // init config at here
-        initConfiguration()
-    }
-
-
-    override fun onAnimationRepeat(animation: Animation?) {
-        // do nothing
-    }
-
     /**
      * 初始化配置，如loading 的显示 与 icon的动画 触摸反馈等
      */
@@ -401,58 +346,9 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
 
     }
 
-    /**
-     * duration 时间到了，启动消失动画
-     */
-    private fun prepareHide() {
-        postDelayed({ hide() }, duration)
-    }
-
-    /**
-     * 消失 启动消失动画
-     */
-    private fun hide() {
-        startAnimation(exitAnimation)
-        exitAnimation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationRepeat(animation: Animation?) {
-            }
-
-            override fun onAnimationEnd(animation: Animation?) {
-                // to remove all views
-                cleanUp()
-            }
-
-            override fun onAnimationStart(animation: Animation?) {
-            }
-        })
-    }
-
-    /**
-     * 移除所有动画和WarnView
-     */
-    private fun cleanUp() {
-        clearAnimation() //
-        visibility = View.GONE
-        postDelayed({
-            (parent as? ViewGroup)?.removeView(this@Warn)
-            //  todo call hideListener
-        }, 100)
-
-    }
-
-    private fun cleanUp2(){
-        clearAnimation() //
-        visibility = View.GONE
-        postDelayed({
-
-        }, 100)
-
-    }
-
-
     companion object {
         private val TAG = Warn::class.java.simpleName
-        private const val DISPLAY_TIME: Long = 3000
+        const val DISPLAY_TIME: Long = 3000
     }
 
 }

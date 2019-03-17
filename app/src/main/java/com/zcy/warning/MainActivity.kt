@@ -13,6 +13,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun show(view: View) {
-        Warning.create(this).show()
+//        Warning.create(this).show()
+        val warning = Warning()
+        warning.setActivity(this)
+        warning.show()
     }
 }
