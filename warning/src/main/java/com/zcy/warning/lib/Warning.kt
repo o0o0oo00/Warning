@@ -32,21 +32,11 @@ class Warning {
     private lateinit var warn: Warn
     private var hasPermission = false
 
-    private val activityDecorView: ViewGroup?
-        get() {
-            return activityWeakReference?.get()?.window?.decorView as? ViewGroup
-        }
-
     private var windowManager: WindowManager? = null
 
     // after build
     fun show() {
-        log("show")
-        // why should run on ui thread ?
-//        activityDecorView?.addView(warn)
-
         windowManager?.also {
-            log("addView $windowManager")
             try {
                 it.addView(warn, initLayoutParameter())
             } catch (e: Exception) {
@@ -54,20 +44,14 @@ class Warning {
             }
         }
 
+        // time over dismiss
         warn.postDelayed({
-            log("2${warn.hasShowed}")
-            if (warn.hasShowed) {
-                log("post delay remove view")
-                windowManager?.removeViewImmediate(warn)
-            }
+           warn.hide(windowManager?:return@postDelayed)
         }, Warn.DISPLAY_TIME)
 
+        // click dismiss
         warn.warn_body.setOnClickListener {
-            log("1${warn.hasShowed}")
-            if (warn.hasShowed) {
-                log("click to remove view")
-                windowManager?.removeViewImmediate(warn)
-            }
+            warn.hide(windowManager?:return@setOnClickListener)
         }
 
 
@@ -119,11 +103,10 @@ class Warning {
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                     WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR // 确保你的内容不会被装饰物(如状态栏)掩盖.
         // popWindow的层级为 TYPE_APPLICATION_PANEL
-        //        TODO("adjust permission")
+        //        TODO("adjust permission to choice type")
 
 
         layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL
-        layoutParams.windowAnimations = R.style.windowManager
 
         return layoutParams
     }
@@ -139,18 +122,15 @@ class Warning {
     companion object {
         private var activityWeakReference: WeakReference<Activity>? = null
 
-//        @JvmStatic
-//        fun create(activity: Activity?): Warning {
-//            if (activity == null) {
-//                throw IllegalArgumentException("Activity cannot be null!")
-//            }
-//            val warning = Warning()
-////            Warning.removeBefore(activity)
-//            warning.setActivity(activity)
-//            warning.warn = Warn(activity)
-//
-//            return warning
-//        }
+        @JvmStatic
+        fun create(activity: Activity?): Warning {
+            if (activity == null) {
+                throw IllegalArgumentException("Activity cannot be null!")
+            }
+            val warning = Warning()
+            warning.setActivity(activity)
+            return warning
+        }
 //
 //        // TODO i want config it to support a show queue
 //

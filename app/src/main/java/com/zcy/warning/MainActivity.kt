@@ -1,8 +1,11 @@
 package com.zcy.warning
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
+import androidx.core.os.postDelayed
 import com.zcy.warning.lib.Warning
 
 class MainActivity : AppCompatActivity() {
@@ -13,9 +16,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun show(view: View) {
-//        Warning.create(this).show()
-        val warning = Warning()
-        warning.setActivity(this)
-        warning.show()
+        Warning.create(this).show()
+        Handler().postDelayed({
+            startActivity(Intent(this, Main2Activity::class.java))
+        }, 800)
+    }
+
+    fun show2(view: View){
+        Warning.create(this).show()
     }
 }
