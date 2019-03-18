@@ -1,9 +1,11 @@
 package com.zcy.warning.lib
 
-import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Handler
@@ -12,7 +14,9 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.view.animation.*
+import android.view.animation.AnimationUtils
+import android.view.animation.AnticipateOvershootInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import androidx.annotation.*
 import androidx.appcompat.content.res.AppCompatResources
@@ -27,31 +31,29 @@ import kotlinx.android.synthetic.main.layout_warn.view.*
  */
 class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     FrameLayout(context, attrs, defStyleAttr) {
-    private fun log(e: String) {
-        Log.e(this::class.java.simpleName, "${this::class.java.simpleName} $e")
-    }
 
     private lateinit var animEnter: ObjectAnimator
     private val animEnterInterceptor = OvershootInterpolator()
 
-    private var hasShowed = false
-
     init {
         inflate(context, R.layout.layout_warn, this)
-//        isHapticFeedbackEnabled = true  触力反馈
+    }
+
+    /**
+     * 初始化配置，如loading 的显示 与 icon的动画 触摸反馈等
+     */
+    private fun initConfiguration() {
+        icon?.startAnimation(AnimationUtils.loadAnimation(context, R.anim.alerter_pulse))
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        hasShowed = true
         Log.e(TAG, "onAttachedToWindow")
         initConfiguration()
-
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        hasShowed = false
         Log.e(TAG, "onDetachedFromWindow")
     }
 
@@ -348,26 +350,24 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
 //        }
 //    }
 
-    fun hide(windowManager: WindowManager) {
-        if (!hasShowed) {
+    fun hide(windowManager: WindowManager, removeNow: Boolean = false) {
+        if (!this@Warn.isAttachedToWindow) {
             return
         }
-        hasShowed = false
+        if (removeNow) {
+            windowManager.removeViewImmediate(this@Warn)
+            return
+        }
         warn_body.isClickable = false
         val anim = ObjectAnimator.ofFloat(this@Warn, "translationY", -80F, -this@Warn.measuredHeight.toFloat())
         anim.interpolator = AnticipateOvershootInterpolator()
         anim.duration = ANIMATION_DURATION
         anim.start()
         Handler().postDelayed({
-            windowManager.removeViewImmediate(this@Warn)
+            if (this@Warn.isAttachedToWindow) {
+                windowManager.removeViewImmediate(this@Warn)
+            }
         }, ANIMATION_DURATION)
-    }
-
-    /**
-     * 初始化配置，如loading 的显示 与 icon的动画 触摸反馈等
-     */
-    private fun initConfiguration() {
-        icon?.startAnimation(AnimationUtils.loadAnimation(context, R.anim.alerter_pulse))
     }
 
     companion object {

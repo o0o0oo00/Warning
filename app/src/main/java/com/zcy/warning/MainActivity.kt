@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     fun show(view: View) {
         Warning.create(this).show()
         Handler().postDelayed({
-            startActivity(Intent(this, Main2Activity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
         }, 800)
     }
 

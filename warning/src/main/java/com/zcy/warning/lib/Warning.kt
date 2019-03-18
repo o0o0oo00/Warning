@@ -5,46 +5,35 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.PixelFormat
-import android.os.Handler
 import android.util.Log
 import android.view.Gravity
-import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.view.ViewCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import kotlinx.android.synthetic.main.layout_warn.view.*
-import java.lang.Exception
 import java.lang.ref.WeakReference
-import kotlin.math.log
 
 /**
  * @author:         zhaochunyu
  * @description:    Warn helper class
  * @date:           2019/3/15
  */
-class Warning {
-
-    private fun log(e: String) {
-        Log.e(this::class.java.simpleName, "${this::class.java.simpleName} $e")
-    }
-
+class Warning : LifecycleObserver {
     private lateinit var warn: Warn
     private var hasPermission = false
 
     private var windowManager: WindowManager? = null
 
-    // after build
+    // after create
     fun show() {
         windowManager?.also {
             try {
-                activityWeakReference?.get()?.let { activity ->
-                    if (activity.isFinishing || activity.isDestroyed) {
-                        return@also
-                    } else {
-                        it.addView(warn, initLayoutParameter())
-                    }
-                }
+                log("show addView")
+                it.addView(warn, initLayoutParameter())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -52,25 +41,24 @@ class Warning {
 
         // time over dismiss
         warn.postDelayed({
-            activityWeakReference?.get()?.let { activity ->
-                if (activity.isFinishing || activity.isDestroyed) {
-                    return@postDelayed
-                } else {
-                    warn.hide(windowManager ?: return@postDelayed)
-                }
-            }
+            log("postDelayed hide")
+            warn.hide(windowManager ?: return@postDelayed)
         }, Warn.DISPLAY_TIME)
 
         // click dismiss
         warn.warn_body.setOnClickListener {
+            log("setOnClickListener hide")
             warn.hide(windowManager ?: return@setOnClickListener)
         }
 
-
     }
 
-    fun registerLifeCycle() {
-
+    // window manager must associate activity's lifecycle
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onDestroy(owner: LifecycleOwner) {
+        log("onDestroy removeViewImmediate")
+        warn.hide(windowManager ?: return, true)
+        owner.lifecycle.removeObserver(this)
     }
 
     // todo 暂时先不写
@@ -128,51 +116,27 @@ class Warning {
     }
 
     // must invoke first
-    fun setActivity(activity: Activity) {
+    private fun setActivity(activity: AppCompatActivity) {
         activityWeakReference = WeakReference(activity)
         warn = Warn(activity)
         windowManager = activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-
+        activity.lifecycle.addObserver(this)
     }
 
     companion object {
+
+        private fun log(e: String) {
+            Log.e(this::class.java.simpleName, "${this} $e")
+        }
+
         private var activityWeakReference: WeakReference<Activity>? = null
 
         @JvmStatic
-        fun create(activity: Activity?): Warning {
-            if (activity == null) {
-                throw IllegalArgumentException("Activity cannot be null!")
-            }
+        fun create(activity: AppCompatActivity): Warning {
             val warning = Warning()
             warning.setActivity(activity)
             return warning
         }
-//
-//        // TODO i want config it to support a show queue
-//
-//        @JvmStatic
-//        fun removeBefore(activity: Activity?) {
-//            (activity?.window?.decorView as? ViewGroup)?.let {
-//                var child: Warn?
-//                for (i in 0 until it.childCount) {
-//                    child = if (it.getChildAt(i) is Warn) it.getChildAt(i) as Warn else null
-//                    if (child != null && child.windowToken != null) {
-//                        ViewCompat.animate(child).alpha(0f).withEndAction(
-//                            getRemoveViewRunnable(
-//                                child
-//                            )
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//
-//        private fun getRemoveViewRunnable(childView: Warn?): Runnable {
-//            return Runnable {
-//                childView?.let {
-//                    (childView.parent as? ViewGroup)?.removeView(childView)
-//                }
-//            }
-//        }
+
     }
 }
