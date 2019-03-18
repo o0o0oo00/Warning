@@ -66,6 +66,26 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
         animEnter.start()
     }
 
+    fun hide(windowManager: WindowManager, removeNow: Boolean = false) {
+        if (!this@Warn.isAttachedToWindow) {
+            return
+        }
+        if (removeNow) {
+            windowManager.removeViewImmediate(this@Warn)
+            return
+        }
+        warn_body.isClickable = false
+        val anim = ObjectAnimator.ofFloat(this@Warn, "translationY", -80F, -this@Warn.measuredHeight.toFloat())
+        anim.interpolator = AnticipateOvershootInterpolator()
+        anim.duration = ANIMATION_DURATION
+        anim.start()
+        Handler().postDelayed({
+            if (this@Warn.isAttachedToWindow) {
+                windowManager.removeViewImmediate(this@Warn)
+            }
+        }, ANIMATION_DURATION)
+    }
+
 
     fun setWarnBackgroundColor(@ColorInt color: Int) {
         warn_body.setBackgroundColor(color)
@@ -103,22 +123,6 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
     }
 
     /**
-     * Sets the Text of the Warn
-     *
-     * @param textId String resource id of the Warn text
-     */
-    fun setText(@StringRes textId: Int) {
-        setText(context.getString(textId))
-    }
-
-    /**
-     * Disable touches while the Warn is showing
-     */
-    fun disableOutsideTouch() {
-        warn_body.isClickable = true
-    }
-
-    /**
      * Sets the Title of the Warn
      *
      * @param title String object to be used as the Warn title
@@ -150,6 +154,15 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
      */
     fun setTitleTypeface(typeface: Typeface) {
         text.typeface = typeface
+    }
+
+    /**
+     * Sets the Text of the Warn
+     *
+     * @param textId String resource id of the Warn text
+     */
+    fun setText(@StringRes textId: Int) {
+        setText(context.getString(textId))
     }
 
     /**
@@ -251,23 +264,6 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
     }
 
     /**
-     * Set if the warner is isDismissable or not
-     *
-     * @param dismissible True if warn can be dismissed
-     */
-//    fun setDismissable(dismissable: Boolean) {
-//        this.isDismissable = dismissable
-//    }
-//
-//    /**
-//     * Get if the warn is isDismissable
-//     * @return
-//     */
-//    fun isDismissable(): Boolean {
-//        return isDismissable
-//    }
-
-    /**
      * Set if the Icon should pulse or not
      *
      * @param shouldPulse True if the icon should be animated
@@ -313,15 +309,6 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
     }
 
     /**
-     * Set the warn's listener to be fired on the warn being fully shown
-     *
-     * @param listener Listener to be fired
-     */
-//    fun setOnShowListener(listener: OnShowwarnListener) {
-//        this.onShowListener = listener
-//    }
-
-    /**
      * Enable or Disable haptic feedback
      *
      * @param vibrationEnabled True to enable, false to disable
@@ -350,25 +337,6 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
 //        }
 //    }
 
-    fun hide(windowManager: WindowManager, removeNow: Boolean = false) {
-        if (!this@Warn.isAttachedToWindow) {
-            return
-        }
-        if (removeNow) {
-            windowManager.removeViewImmediate(this@Warn)
-            return
-        }
-        warn_body.isClickable = false
-        val anim = ObjectAnimator.ofFloat(this@Warn, "translationY", -80F, -this@Warn.measuredHeight.toFloat())
-        anim.interpolator = AnticipateOvershootInterpolator()
-        anim.duration = ANIMATION_DURATION
-        anim.start()
-        Handler().postDelayed({
-            if (this@Warn.isAttachedToWindow) {
-                windowManager.removeViewImmediate(this@Warn)
-            }
-        }, ANIMATION_DURATION)
-    }
 
     companion object {
         private val TAG = Warn::class.java.simpleName

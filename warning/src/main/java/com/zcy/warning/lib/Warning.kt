@@ -8,6 +8,7 @@ import android.graphics.PixelFormat
 import android.util.Log
 import android.view.Gravity
 import android.view.WindowManager
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Lifecycle
@@ -104,8 +105,8 @@ class Warning : LifecycleObserver {
 
         layoutParams.flags =
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or // 不获取焦点，以便于在弹出的时候 下层界面仍然可以进行操作
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR // 确保你的内容不会被装饰物(如状态栏)掩盖.
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR // 确保你的内容不会被装饰物(如状态栏)掩盖.
         // popWindow的层级为 TYPE_APPLICATION_PANEL
         //        TODO("adjust permission to choice type")
 
@@ -121,6 +122,13 @@ class Warning : LifecycleObserver {
         warn = Warn(activity)
         windowManager = activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         activity.lifecycle.addObserver(this)
+    }
+
+
+    // 高阶函数 配置 warn属性
+    fun config(block: Warn.() -> Unit): Warning {
+        warn.apply(block)
+        return this
     }
 
     companion object {

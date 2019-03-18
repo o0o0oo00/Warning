@@ -23,6 +23,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun show2(view: View){
-        Warning.create(this).show()
+        Warning.create(this).config {
+            setTitle("title")
+            setText("text")
+            setWarnBackgroundColor(resources.getColor(R.color.colorAccent))
+        }.show()
     }
 }
