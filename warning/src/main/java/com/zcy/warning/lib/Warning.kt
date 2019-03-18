@@ -38,7 +38,13 @@ class Warning {
     fun show() {
         windowManager?.also {
             try {
-                it.addView(warn, initLayoutParameter())
+                activityWeakReference?.get()?.let { activity ->
+                    if (activity.isFinishing || activity.isDestroyed) {
+                        return@also
+                    } else {
+                        it.addView(warn, initLayoutParameter())
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -46,14 +52,24 @@ class Warning {
 
         // time over dismiss
         warn.postDelayed({
-           warn.hide(windowManager?:return@postDelayed)
+            activityWeakReference?.get()?.let { activity ->
+                if (activity.isFinishing || activity.isDestroyed) {
+                    return@postDelayed
+                } else {
+                    warn.hide(windowManager ?: return@postDelayed)
+                }
+            }
         }, Warn.DISPLAY_TIME)
 
         // click dismiss
         warn.warn_body.setOnClickListener {
-            warn.hide(windowManager?:return@setOnClickListener)
+            warn.hide(windowManager ?: return@setOnClickListener)
         }
 
+
+    }
+
+    fun registerLifeCycle() {
 
     }
 

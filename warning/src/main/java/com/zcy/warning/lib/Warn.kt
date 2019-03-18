@@ -51,6 +51,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        hasShowed = false
         Log.e(TAG, "onDetachedFromWindow")
     }
 
@@ -59,7 +60,7 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
         Log.e(TAG, "onMeasure")
         animEnter = ObjectAnimator.ofFloat(this@Warn, "translationY", -this@Warn.measuredHeight.toFloat(), -80F)
         animEnter.interpolator = animEnterInterceptor
-        animEnter.duration = 500
+        animEnter.duration = ANIMATION_DURATION
         animEnter.start()
     }
 
@@ -353,14 +354,13 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
         }
         hasShowed = false
         warn_body.isClickable = false
-        log("${this@Warn.measuredHeight}")
         val anim = ObjectAnimator.ofFloat(this@Warn, "translationY", -80F, -this@Warn.measuredHeight.toFloat())
         anim.interpolator = AnticipateOvershootInterpolator()
-        anim.duration = 500
+        anim.duration = ANIMATION_DURATION
         anim.start()
         Handler().postDelayed({
             windowManager.removeViewImmediate(this@Warn)
-        }, 500)
+        }, ANIMATION_DURATION)
     }
 
     /**
@@ -373,6 +373,8 @@ class Warn @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nu
     companion object {
         private val TAG = Warn::class.java.simpleName
         const val DISPLAY_TIME: Long = 3000
+        const val ANIMATION_DURATION: Long = 500
+
     }
 
 }
